@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  name      String?
+  email     String?  @unique
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  conversations Conversation[]
+
+  // Fields for contacts
+  sentMessages Message[]
+  seenMessage  SeenMessage[]
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Fields for group conversations
+  name     String?
+  imageUrl String?
+  isGroup  Boolean @default(false)
+
+  lastMessageAt DateTime @default(now())
+
+  members  Profile[]
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  body     String?
+  imageUrl String?
+
+  // Relationships
+  senderId String
+  sender   Profile @relation(fields: [senderId], references: [id])
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  // Fields for seen messages
+  seenBy SeenMessage[]
+}
+
+model SeenMessage {
+  messageId String
+  message   Message @relation(fields: [messageId], references: [id])
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  seenAt DateTime @default(now())
+
+  @@id([messageId, profileId])
+}
