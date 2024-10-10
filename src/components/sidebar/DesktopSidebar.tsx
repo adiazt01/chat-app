@@ -3,8 +3,23 @@
 import { useRoutes } from "@/hooks/useRoutes";
 import { useState } from "react";
 import { DesktopItem } from "./DesktopItem";
+import { Profile } from "@prisma/client";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { SignedOut, SignOutButton } from "@clerk/nextjs";
 
-export function DesktopSidebar() {
+interface DesktopSidebarProps {
+  currentProfile: Profile;
+}
+
+export function DesktopSidebar({ currentProfile }: DesktopSidebarProps) {
   const routes = useRoutes();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,6 +38,24 @@ export function DesktopSidebar() {
             />
           ))}
         </ul>
+      </nav>
+      <nav className="mt-4 flex flex-col justify-between items-center">
+        <DropdownMenu>
+          <DropdownMenuTrigger className="relative">
+            <Avatar className="relative">
+              <AvatarImage src={currentProfile.imageUrl} />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <span className="absolute animate-pulse top-0 z-10 right-0 w-3 h-3 bg-green-500 rounded-full"></span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="ml-4 md:block hidden mb-2">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <SignOutButton>
+              <DropdownMenuItem>Logout</DropdownMenuItem>
+            </SignOutButton>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </nav>
     </div>
   );

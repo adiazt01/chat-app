@@ -1,5 +1,5 @@
 import { useAuth } from "@clerk/nextjs";
-import { LogOut, MessageCircle } from "lucide-react";
+import { LogOut, MessageCircle, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { useConversation } from "./useConversation";
@@ -13,15 +13,15 @@ export const useRoutes = () => {
     () => [
       {
         label: "Chat",
-        href: "/conversations",
+        href: "/app/conversations",
         active: pathname === "/conversations" || !!conversationId,
         icon: MessageCircle,
       },
       {
         label: "App",
-        href: "/app",
+        href: "/app/profiles",
         active: pathname === "/app",
-        icon: MessageCircle,
+        icon: User,
       },
       {
         label: "Logout",
